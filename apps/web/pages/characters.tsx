@@ -1,20 +1,21 @@
 import {
   Button,
-  Card,
-  Container,
   createStyles,
   Grid,
+  Pagination,
   Paper,
-  Text,
   Title,
 } from '@mantine/core';
+import { useRouter, NextRouter } from 'next/router';
+import { NextApiRequest } from 'next';
 import React from 'react';
 import { getImagePlaceholder } from '../helpers/image-placeholder';
 
-export async function getStaticProps() {
+export async function getServerSideProps({ query }: NextApiRequest) {
+  const page = query.page || 1;
   // Call an external API endpoint to get posts.
   // You can use any data fetching library
-  const res = await fetch('https://swapi.dev/api/people');
+  const res = await fetch(`https://swapi.dev/api/people?page=${page}`);
   const data = await res.json();
 
   return {
@@ -23,6 +24,10 @@ export async function getStaticProps() {
     },
   };
 }
+
+type CharactersProps = {
+  data: PeopleResponse;
+};
 
 type PeopleResponse = {
   count: number;
@@ -72,10 +77,17 @@ const useStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes.xl * 1.3,
     marginTop: theme.spacing.xs,
   },
+  pages: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing.md,
+  },
 }));
 
-export default function Characters({ data }: { data: PeopleResponse }) {
+export default function Characters({ data }: CharactersProps) {
   const { classes } = useStyles();
+  const { query } = useRouter();
+  const page = query.page || 1;
 
   return (
     <div className={classes.container}>
@@ -83,7 +95,7 @@ export default function Characters({ data }: { data: PeopleResponse }) {
         {data.results.map((person, index) => {
           const { name } = person;
           return (
-            <Grid.Col span={2} key={index}>
+            <Grid.Col span={2} key={name}>
               <Paper
                 shadow="md"
                 p="xl"
@@ -104,6 +116,9 @@ export default function Characters({ data }: { data: PeopleResponse }) {
           );
         })}
       </Grid>
+      <div className={classes.pages}>
+        <Pagination total={data.count} siblings={1} initialPage={+page} />
+      </div>
     </div>
   );
 }
