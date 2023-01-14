@@ -16,7 +16,9 @@ export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
   // Call an external API endpoint to get posts.
   // You can use any data fetching library
-  const res = await fetch(`https://swapi.dev/api/people?page=${page}`);
+  const res = await fetch(
+    `https://swapi.dev/api/${query.category}?page=${page}`
+  );
   const data = await res.json();
 
   return {
@@ -27,10 +29,10 @@ export async function getServerSideProps({ query }: NextApiRequest) {
 }
 
 type CharactersProps = {
-  data: PeopleResponse;
+  data: asyncResponse;
 };
 
-type PeopleResponse = {
+type asyncResponse = {
   count: number;
   next: string;
   previous: string;
@@ -101,7 +103,7 @@ export default function Characters({ data }: CharactersProps) {
   const handlePageChange = (page: number) => {
     setIsRefreshing(true);
     router.push({
-      pathname: '/characters',
+      pathname: `/${router.query.category}`,
       query: { page },
     });
   };
