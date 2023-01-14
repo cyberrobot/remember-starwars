@@ -28,7 +28,7 @@ export async function getServerSideProps({ query }: NextApiRequest) {
   };
 }
 
-type CharactersProps = {
+type CategoryProps = {
   data: asyncResponse;
 };
 
@@ -36,26 +36,10 @@ type asyncResponse = {
   count: number;
   next: string;
   previous: string;
-  results: People[];
-};
-
-type People = {
-  birth_year: string;
-  eye_color: string;
-  films: string[];
-  gender: string;
-  hair_color: string;
-  height: string;
-  homeworld: string;
-  mass: string;
-  name: string;
-  skin_color: string;
-  created: Date;
-  edited: Date;
-  species: string[];
-  starships: string[];
-  url: string;
-  vehicles: string[];
+  results: {
+    name?: string;
+    title?: string;
+  }[];
 };
 
 const useStyles = createStyles((theme) => ({
@@ -90,7 +74,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function Characters({ data }: CharactersProps) {
+export default function Category({ data }: CategoryProps) {
   const { classes } = useStyles();
   const router = useRouter();
   const initialPage = router.query.page || 1;
@@ -117,11 +101,11 @@ export default function Characters({ data }: CharactersProps) {
       <div className={classes.innerContainer}>
         <LoadingOverlay visible={isRefreshing} overlayOpacity={0.8} />
         <Grid>
-          {data.results.map((person, index) => {
+          {data.results.map((category, index) => {
             const url = getImagePlaceholder();
-            const { name } = person;
+            const { name, title } = category;
             return (
-              <Grid.Col span={2} key={name}>
+              <Grid.Col span={2} key={index}>
                 <Paper
                   shadow="md"
                   p="xl"
@@ -131,7 +115,7 @@ export default function Characters({ data }: CharactersProps) {
                 >
                   <div>
                     <Title order={3} className={classes.title}>
-                      {name}
+                      {name || title}
                     </Title>
                   </div>
                   <Button variant="white" color="dark">
