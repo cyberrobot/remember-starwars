@@ -2,11 +2,12 @@ import {
   Button,
   createStyles,
   Grid,
+  LoadingOverlay,
   Pagination,
   Paper,
   Title,
 } from '@mantine/core';
-import { useRouter, NextRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import React from 'react';
 import { getImagePlaceholder } from '../helpers/image-placeholder';
@@ -59,6 +60,9 @@ const useStyles = createStyles((theme) => ({
   container: {
     padding: theme.spacing.sm,
   },
+  innerContainer: {
+    position: 'relative',
+  },
   card: {
     height: 350,
     display: 'flex',
@@ -86,38 +90,64 @@ const useStyles = createStyles((theme) => ({
 
 export default function Characters({ data }: CharactersProps) {
   const { classes } = useStyles();
-  const { query } = useRouter();
-  const page = query.page || 1;
+  const router = useRouter();
+  const initialPage = router.query.page || 1;
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsRefreshing(false);
+  }, [data.results]);
+
+  const handlePageChange = (page: number) => {
+    setIsRefreshing(true);
+    router.push({
+      pathname: '/characters',
+      query: { page },
+    });
+  };
+
+  const getPageCount = () => {
+    return Math.ceil(data.count / 10);
+  };
 
   return (
     <div className={classes.container}>
-      <Grid>
-        {data.results.map((person, index) => {
-          const { name } = person;
-          return (
-            <Grid.Col span={2} key={name}>
-              <Paper
-                shadow="md"
-                p="xl"
-                radius="md"
-                sx={{ backgroundImage: `url(${getImagePlaceholder()})` }}
-                className={classes.card}
-              >
-                <div>
-                  <Title order={3} className={classes.title}>
-                    {name}
-                  </Title>
-                </div>
-                <Button variant="white" color="dark">
-                  Read more
-                </Button>
-              </Paper>
-            </Grid.Col>
-          );
-        })}
-      </Grid>
+      <div className={classes.innerContainer}>
+        <LoadingOverlay visible={isRefreshing} overlayOpacity={0.8} />
+        <Grid>
+          {data.results.map((person, index) => {
+            const url = getImagePlaceholder();
+            const { name } = person;
+            return (
+              <Grid.Col span={2} key={name}>
+                <Paper
+                  shadow="md"
+                  p="xl"
+                  radius="md"
+                  sx={{ backgroundImage: `url(${url})` }}
+                  className={classes.card}
+                >
+                  <div>
+                    <Title order={3} className={classes.title}>
+                      {name}
+                    </Title>
+                  </div>
+                  <Button variant="white" color="dark">
+                    Read more
+                  </Button>
+                </Paper>
+              </Grid.Col>
+            );
+          })}
+        </Grid>
+      </div>
       <div className={classes.pages}>
-        <Pagination total={data.count} siblings={1} initialPage={+page} />
+        <Pagination
+          total={getPageCount()}
+          siblings={1}
+          page={+initialPage}
+          onChange={handlePageChange}
+        />
       </div>
     </div>
   );

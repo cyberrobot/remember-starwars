@@ -1,6 +1,10 @@
 module.exports = {
   reactStrictMode: true,
   experimental: {
-    transpilePackages: ["ui"],
+    transpilePackages: ['ui'],
+  },
+  compiler: {
+    // Enables the styled-components SWC transform
+    styledComponents: true,
   },
 };
