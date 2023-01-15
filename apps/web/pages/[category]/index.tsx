@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import React from 'react';
-import { getImagePlaceholder } from '../helpers/image-placeholder';
+import { getImagePlaceholder } from '../../helpers/image-placeholder';
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
