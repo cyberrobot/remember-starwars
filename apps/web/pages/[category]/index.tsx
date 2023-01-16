@@ -107,6 +107,8 @@ export default function Category({ data }: CategoryProps) {
   const onQueryChange = useMemo(
     () =>
       lodashDebounce((value: string) => {
+        if (!value) return setQueryResults([]);
+
         const searchEndpoint = (query: string) => {
           return `https://swapi.dev/api/${router.query.category}/?search=${query}`;
         };
