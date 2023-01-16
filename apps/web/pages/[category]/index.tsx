@@ -135,7 +135,7 @@ export default function Category({ data }: CategoryProps) {
         const url = getImagePlaceholder();
         const { name, title } = category;
         return (
-          <Grid.Col span={2} key={index}>
+          <Grid.Col span={3} key={index}>
             <Paper
               shadow="md"
               p="xl"
