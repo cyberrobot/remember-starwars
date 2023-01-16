@@ -1,4 +1,5 @@
 import {
+  AutocompleteItem,
   Button,
   createStyles,
   Grid,
@@ -9,13 +10,15 @@ import {
 } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { getImagePlaceholder } from '../../helpers/image-placeholder';
+import { SearchInput } from '../../components/SearchInput';
+import lodashDebounce from 'lodash/debounce';
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
   // Call an external API endpoint to get posts.
-  // You can use any data fetching library
+  // You can use any data fetching library.
   const res = await fetch(
     `https://swapi.dev/api/${query.category}?page=${page}`
   );
@@ -29,10 +32,10 @@ export async function getServerSideProps({ query }: NextApiRequest) {
 }
 
 type CategoryProps = {
-  data: asyncResponse;
+  data: AsyncResponse;
 };
 
-type asyncResponse = {
+export type AsyncResponse = {
   count: number;
   next: string;
   previous: string;
@@ -48,6 +51,10 @@ const useStyles = createStyles((theme) => ({
   },
   innerContainer: {
     position: 'relative',
+  },
+  autocompleteContainer: {
+    width: '300px',
+    marginBottom: theme.spacing.md,
   },
   card: {
     height: 350,
@@ -79,6 +86,7 @@ export default function Category({ data }: CategoryProps) {
   const router = useRouter();
   const initialPage = router.query.page || 1;
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [queryResults, setQueryResults] = useState<AutocompleteItem[]>();
 
   React.useEffect(() => {
     setIsRefreshing(false);
@@ -96,36 +104,68 @@ export default function Category({ data }: CategoryProps) {
     return Math.ceil(data.count / 10);
   };
 
+  const onQueryChange = useMemo(
+    () =>
+      lodashDebounce((value: string) => {
+        const searchEndpoint = (query: string) => {
+          return `https://swapi.dev/api/${router.query.category}/?search=${query}`;
+        };
+
+        fetch(searchEndpoint(value))
+          .then((res) => res.json())
+          .then((res) => {
+            setQueryResults(
+              res.results.map((item: any) => {
+                return {
+                  ...item,
+                  value: item.name || item.title,
+                };
+              })
+            );
+          });
+      }, 300),
+    []
+  );
+
+  const pageData = useMemo(
+    () =>
+      data.results.map((category, index) => {
+        const url = getImagePlaceholder();
+        const { name, title } = category;
+        return (
+          <Grid.Col span={2} key={index}>
+            <Paper
+              shadow="md"
+              p="xl"
+              radius="md"
+              sx={{ backgroundImage: `url(${url})` }}
+              className={classes.card}
+            >
+              <div>
+                <Title order={3} className={classes.title}>
+                  {name || title}
+                </Title>
+              </div>
+              <Button variant="white" color="dark">
+                Read more
+              </Button>
+            </Paper>
+          </Grid.Col>
+        );
+      }),
+    [data.results, classes.card, classes.title]
+  );
+
   return (
     <div className={classes.container}>
       <div className={classes.innerContainer}>
+        <SearchInput
+          onChange={onQueryChange}
+          data={queryResults?.length ? queryResults : []}
+          className={classes.autocompleteContainer}
+        />
         <LoadingOverlay visible={isRefreshing} overlayOpacity={0.8} />
-        <Grid>
-          {data.results.map((category, index) => {
-            const url = getImagePlaceholder();
-            const { name, title } = category;
-            return (
-              <Grid.Col span={2} key={index}>
-                <Paper
-                  shadow="md"
-                  p="xl"
-                  radius="md"
-                  sx={{ backgroundImage: `url(${url})` }}
-                  className={classes.card}
-                >
-                  <div>
-                    <Title order={3} className={classes.title}>
-                      {name || title}
-                    </Title>
-                  </div>
-                  <Button variant="white" color="dark">
-                    Read more
-                  </Button>
-                </Paper>
-              </Grid.Col>
-            );
-          })}
-        </Grid>
+        <Grid>{pageData}</Grid>
       </div>
       <div className={classes.pages}>
         <Pagination
