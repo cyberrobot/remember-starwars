@@ -126,7 +126,7 @@ export default function Category({ data }: CategoryProps) {
             );
           });
       }, 300),
-    []
+    [router.query.category]
   );
 
   const pageData = useMemo(
