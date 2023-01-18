@@ -52,8 +52,12 @@ const useStyles = createStyles((theme) => ({
   innerContainer: {
     position: 'relative',
   },
+  searchContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   autocompleteContainer: {
-    width: '300px',
+    width: '400px',
     marginBottom: theme.spacing.md,
   },
   card: {
@@ -161,11 +165,13 @@ export default function Category({ data }: CategoryProps) {
   return (
     <div className={classes.container}>
       <div className={classes.innerContainer}>
-        <SearchInput
-          onChange={onQueryChange}
-          data={queryResults?.length ? queryResults : []}
-          className={classes.autocompleteContainer}
-        />
+        <div className={classes.searchContainer}>
+          <SearchInput
+            onChange={onQueryChange}
+            data={queryResults?.length ? queryResults : []}
+            className={classes.autocompleteContainer}
+          />
+        </div>
         <LoadingOverlay visible={isRefreshing} overlayOpacity={0.8} />
         <Grid>{pageData}</Grid>
       </div>
