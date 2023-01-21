@@ -26,7 +26,13 @@ export async function getServerSideProps({ query }: NextApiRequest) {
 
   return {
     props: {
-      data,
+      data: {
+        ...data,
+        results: data.results.map((item: any) => ({
+          ...item,
+          imageUrl: getImagePlaceholder(),
+        })),
+      },
     },
   };
 }
@@ -42,6 +48,7 @@ export type AsyncResponse = {
   results: {
     name?: string;
     title?: string;
+    imageUrl?: string;
   }[];
 };
 
@@ -136,15 +143,14 @@ export default function Category({ data }: CategoryProps) {
   const pageData = useMemo(
     () =>
       data.results.map((category, index) => {
-        const url = getImagePlaceholder();
-        const { name, title } = category;
+        const { name, title, imageUrl } = category;
         return (
           <Grid.Col span={3} key={index}>
             <Paper
               shadow="md"
               p="xl"
               radius="md"
-              sx={{ backgroundImage: `url(${url})` }}
+              sx={{ backgroundImage: `url(${imageUrl})` }}
               className={classes.card}
             >
               <div>

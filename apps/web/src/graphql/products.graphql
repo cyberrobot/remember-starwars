@@ -1,0 +1,15 @@
+query getProducts {
+  products {
+    id
+    title
+    description
+    price
+    discountPercentage
+    rating
+    stock
+    brand
+    category
+    thumbnail
+    images
+  }
+}
