@@ -2,10 +2,12 @@ import { MantineProvider } from '@mantine/core';
 import { Hydrate, QueryClientProvider } from '@tanstack/react-query';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useState } from 'react';
 
-import { queryClient } from '../src/api';
+import { queryClient as reactQueryClient } from '../src/api';
 
 export default function App(props: AppProps) {
+  const [queryClient] = useState(reactQueryClient);
   const { Component, pageProps } = props;
 
   return (

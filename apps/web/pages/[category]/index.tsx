@@ -1,19 +1,45 @@
-import { AutocompleteItem, Button, createStyles, Grid, LoadingOverlay, Paper, Title } from '@mantine/core';
-import { dehydrate } from '@tanstack/react-query';
+import {
+  AutocompleteItem,
+  Button,
+  createStyles,
+  Grid,
+  LoadingOverlay,
+  Paper,
+  Title,
+} from '@mantine/core';
+import { dehydrate, useQuery } from '@tanstack/react-query';
 import lodashDebounce from 'lodash/debounce';
 import { NextApiRequest } from 'next';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
 
 import { SearchInput } from '../../components/SearchInput';
-import { GetProductsQuery, useGetProductsQuery } from '../../src/__generated__/generates';
+import { graphql } from '../../src/gql';
 import { gqlClient, queryClient } from '../../src/api';
+
+const GetProductsDocument = graphql(/* GraphQL */ `
+  query getProducts {
+    products {
+      id
+      title
+      description
+      price
+      discountPercentage
+      rating
+      stock
+      brand
+      category
+      thumbnail
+      images
+    }
+  }
+`);
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
 
-  await queryClient.prefetchQuery(['products'], () =>
-    useGetProductsQuery(gqlClient)
+  await queryClient.fetchQuery(['getProducts'], () =>
+    gqlClient.request(GetProductsDocument)
   );
 
   return {
@@ -24,10 +50,10 @@ export async function getServerSideProps({ query }: NextApiRequest) {
 }
 
 type CategoryProps = {
-  data: AsyncResponse;
+  products: ResponseProducts;
 };
 
-export type AsyncResponse = {
+export type ResponseProducts = {
   products: {
     title?: string;
     thumbnail?: string;
@@ -76,11 +102,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Category() {
-  const { data, isLoading } = useGetProductsQuery<GetProductsQuery>(
-    gqlClient,
-    {}
+  const { data, isLoading } = useQuery(['getProducts'], () =>
+    gqlClient.request(GetProductsDocument)
   );
-  console.log('first data', data);
   const { classes } = useStyles();
   const router = useRouter();
   const initialPage = router.query.page || 1;
