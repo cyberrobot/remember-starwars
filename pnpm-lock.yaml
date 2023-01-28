@@ -64,6 +64,7 @@ importers:
       '@mantine/core': ^5.9.5
       '@mantine/hooks': ^5.9.5
       '@mantine/next': ^5.9.5
+      '@tabler/icons-react': ^2.1.2
       '@tanstack/react-query': ^4.22.3
       '@types/graphql': ^14.5.0
       '@types/lodash': ^4.14.191
@@ -85,6 +86,7 @@ importers:
       ts-node: ^10.9.1
       tsconfig: workspace:*
       type-graphql: ^1.1.1
+      typescript: 4.9.4
       ui: workspace:*
     dependencies:
       '@emotion/react': 11.10.5_3grbeiqrb6djg67fiejiqngkdi
@@ -92,6 +94,7 @@ importers:
       '@mantine/core': 5.9.5_hzg3oku4uxnt5crkeceagoktyy
       '@mantine/hooks': 5.9.5_react@18.2.0
       '@mantine/next': 5.9.5_ae6fqzw2xsl3x7be62hhoqcim4
+      '@tabler/icons-react': 2.1.2_react@18.2.0
       '@tanstack/react-query': 4.22.3_biqbaboplfbrettd7655fr4n2y
       '@types/graphql': 14.5.0
       '@types/lodash': 4.14.191
@@ -114,8 +117,9 @@ importers:
       '@types/react-dom': 18.0.10
       eslint: 7.32.0
       eslint-config-custom: link:../../packages/eslint-config-custom
-      ts-node: 10.9.1_@types+node@17.0.45
+      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
       tsconfig: link:../../packages/tsconfig
+      typescript: 4.9.4
 
   packages/eslint-config-custom:
     specifiers:
@@ -2189,6 +2193,20 @@ packages:
     resolution: {integrity: sha512-rEUrBSGIoSFuYxwBYtlUFMlE2CwGhmW+w9355/5oduSw8e5h2+Tj4UrAGNNgP9915++wj5vkQo0UuOBqOAq4nw==}
     dependencies:
       tslib: 2.4.1
+    dev: false
+
+  /@tabler/icons-react/2.1.2_react@18.2.0:
+    resolution: {integrity: sha512-DrJrr7e7+tzsqm3KFw1gg9Pfapz+gNA2bwv78tdlMKVQ5G6bfEtKVugzqqpgLfCJN/CgcM1ZROGrLtdmV/O6gw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tabler/icons': 2.1.2
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
+  /@tabler/icons/2.1.2:
+    resolution: {integrity: sha512-+CPB+BSqVDP4+/d+cHSaGwG460C3sob7EJkQ+ZS8xV6bRER64OsCP92O7M+uYBhJFDWuf6poCeSETNZNcFa2nA==}
     dev: false
 
   /@tanstack/query-core/4.22.0:
@@ -5537,7 +5555,7 @@ packages:
     resolution: {integrity: sha512-PGcnJoTBnVGy6yYNFxWVNkdcAuAMstvutN9MgDJIV6L0oG8fB+ZNNy1T+wJzah8RPGor1mZuPQkVfXNDpy9eHA==}
     dev: true
 
-  /ts-node/10.9.1_@types+node@17.0.45:
+  /ts-node/10.9.1_zpb5kzpnyozdjq4cwaojlul57u:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -5563,6 +5581,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
+      typescript: 4.9.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true

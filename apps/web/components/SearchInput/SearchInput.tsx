@@ -1,8 +1,10 @@
 import {
+  ActionIcon,
   Autocomplete,
   AutocompleteItem,
   AutocompleteProps,
 } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 import { KeyboardEvent, useState } from 'react';
 
 type SearchInputProps = {
@@ -31,6 +33,11 @@ export const SearchInput = ({
     }
   };
 
+  const onResetHandler = () => {
+    setQuery('');
+    onChange('');
+  };
+
   return (
     <Autocomplete
       value={query}
@@ -39,6 +46,11 @@ export const SearchInput = ({
       onKeyUp={onSubmitHandler}
       placeholder="Start typing to see results"
       data={query.length > 0 ? data : []}
+      rightSection={
+        <ActionIcon variant="subtle">
+          <IconX onClick={onResetHandler} />
+        </ActionIcon>
+      }
       {...rest}
     />
   );

@@ -15,6 +15,7 @@
     "@mantine/core": "^5.9.5",
     "@mantine/hooks": "^5.9.5",
     "@mantine/next": "^5.9.5",
+    "@tabler/icons-react": "^2.1.2",
     "@tanstack/react-query": "^4.22.3",
     "@types/graphql": "^14.5.0",
     "@types/lodash": "^4.14.191",
@@ -39,6 +40,7 @@
     "eslint": "7.32.0",
     "eslint-config-custom": "workspace:*",
     "ts-node": "^10.9.1",
-    "tsconfig": "workspace:*"
+    "tsconfig": "workspace:*",
+    "typescript": "4.9.4"
   }
 }
