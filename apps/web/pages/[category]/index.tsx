@@ -16,10 +16,11 @@ import React, { useMemo, useState } from 'react';
 import { SearchInput } from '../../components/SearchInput';
 import { graphql } from '../../src/gql';
 import { gqlClient, queryClient } from '../../src/api';
+import { GetProductsQuery, Product } from '../../src/gql/graphql';
 
 const GetProductsDocument = graphql(/* GraphQL */ `
-  query getProducts {
-    products {
+  query getProducts($page: Float!, $take: Float!) {
+    products(page: $page, take: $take) {
       id
       title
       description
@@ -39,7 +40,10 @@ export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
 
   await queryClient.fetchQuery(['getProducts'], () =>
-    gqlClient.request(GetProductsDocument)
+    gqlClient.request(GetProductsDocument, {
+      page: Number(page),
+      take: 10,
+    })
   );
 
   return {
@@ -48,18 +52,6 @@ export async function getServerSideProps({ query }: NextApiRequest) {
     },
   };
 }
-
-type CategoryProps = {
-  products: ResponseProducts;
-};
-
-export type ResponseProducts = {
-  products: {
-    title?: string;
-    thumbnail?: string;
-  }[];
-  count: number;
-};
 
 const useStyles = createStyles((theme) => ({
   container: {
@@ -102,12 +94,15 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Category() {
-  const { data, isLoading } = useQuery(['getProducts'], () =>
-    gqlClient.request(GetProductsDocument)
-  );
-  const { classes } = useStyles();
   const router = useRouter();
   const initialPage = router.query.page || 1;
+  const { data, isLoading } = useQuery<GetProductsQuery>(['getProducts'], () =>
+    gqlClient.request(GetProductsDocument, {
+      page: Number(initialPage),
+      take: 10,
+    })
+  );
+  const { classes } = useStyles();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [queryResults, setQueryResults] = useState<AutocompleteItem[]>();
 
