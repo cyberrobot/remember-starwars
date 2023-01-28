@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
-    "\n  query getProducts($page: Float!, $take: Float!) {\n    products(page: $page, take: $take) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n": types.GetProductsDocument,
+    "\n  query getProducts($page: Float!, $take: Float!, $search: String) {\n    products(page: $page, take: $take, search: $search) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n": types.GetProductsDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query getProducts($page: Float!, $take: Float!) {\n    products(page: $page, take: $take) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n"): (typeof documents)["\n  query getProducts($page: Float!, $take: Float!) {\n    products(page: $page, take: $take) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n"];
+export function graphql(source: "\n  query getProducts($page: Float!, $take: Float!, $search: String) {\n    products(page: $page, take: $take, search: $search) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n"): (typeof documents)["\n  query getProducts($page: Float!, $take: Float!, $search: String) {\n    products(page: $page, take: $take, search: $search) {\n      id\n      title\n      description\n      price\n      discountPercentage\n      rating\n      stock\n      brand\n      category\n      thumbnail\n      images\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

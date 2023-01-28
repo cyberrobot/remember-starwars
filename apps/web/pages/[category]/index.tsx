@@ -19,8 +19,8 @@ import { gqlClient, queryClient } from '../../src/api';
 import { GetProductsQuery, Product } from '../../src/gql/graphql';
 
 const GetProductsDocument = graphql(/* GraphQL */ `
-  query getProducts($page: Float!, $take: Float!) {
-    products(page: $page, take: $take) {
+  query getProducts($page: Float!, $take: Float!, $search: String) {
+    products(page: $page, take: $take, search: $search) {
       id
       title
       description
@@ -96,15 +96,19 @@ const useStyles = createStyles((theme) => ({
 export default function Category() {
   const router = useRouter();
   const initialPage = router.query.page || 1;
-  const { data, isLoading } = useQuery<GetProductsQuery>(['getProducts'], () =>
-    gqlClient.request(GetProductsDocument, {
-      page: Number(initialPage),
-      take: 10,
-    })
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const { data } = useQuery<GetProductsQuery>(
+    ['getProducts', searchQuery],
+    () =>
+      gqlClient.request(GetProductsDocument, {
+        page: Number(initialPage),
+        take: 10,
+        search: searchQuery,
+      })
   );
   const { classes } = useStyles();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const [queryResults, setQueryResults] = useState<AutocompleteItem[]>();
+  // const [queryResults, setQueryResults] = useState<AutocompleteItem[]>();
 
   React.useEffect(() => {
     setIsRefreshing(false);
@@ -125,27 +129,19 @@ export default function Category() {
   const onQueryChange = useMemo(
     () =>
       lodashDebounce((value: string) => {
-        if (!value) return setQueryResults([]);
-
-        const searchEndpoint = (query: string) => {
-          return `http://localhost:3000/api/graphql`;
-        };
-
-        fetch(searchEndpoint(value))
-          .then((res) => res.json())
-          .then((res) => {
-            setQueryResults(
-              res.results.map((item: any) => {
-                return {
-                  ...item,
-                  value: item.name || item.title,
-                };
-              })
-            );
-          });
+        setSearchQuery(value || '');
       }, 300),
     []
   );
+
+  const toAutocompleteItems = (products: Product[]): AutocompleteItem[] => {
+    return products.map((product) => {
+      return {
+        value: product.title,
+        label: product.title,
+      };
+    });
+  };
 
   const pageData = useMemo(
     () =>
@@ -181,7 +177,9 @@ export default function Category() {
         <div className={classes.searchContainer}>
           <SearchInput
             onChange={onQueryChange}
-            data={queryResults?.length ? queryResults : []}
+            data={
+              data?.products?.length ? toAutocompleteItems(data?.products) : []
+            }
             className={classes.autocompleteContainer}
           />
         </div>

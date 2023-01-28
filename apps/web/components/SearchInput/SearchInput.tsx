@@ -3,7 +3,7 @@ import {
   AutocompleteItem,
   AutocompleteProps,
 } from '@mantine/core';
-import { useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 
 type SearchInputProps = {
   data: AutocompleteItem[];
@@ -19,15 +19,26 @@ export const SearchInput = ({
 
   const onChangeHandler = (value: string) => {
     setQuery(value);
-    onChange(value);
+  };
+
+  const onItemSubmitHandler = (item: AutocompleteItem) => {
+    onChange(item.value);
+  };
+
+  const onSubmitHandler = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onChange(query);
+    }
   };
 
   return (
     <Autocomplete
       value={query}
       onChange={onChangeHandler}
+      onItemSubmit={onItemSubmitHandler}
+      onKeyUp={onSubmitHandler}
       placeholder="Start typing to see results"
-      data={data}
+      data={query.length > 0 ? data : []}
       {...rest}
     />
   );
