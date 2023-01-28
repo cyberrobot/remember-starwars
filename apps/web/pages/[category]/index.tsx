@@ -6,6 +6,8 @@ import {
   LoadingOverlay,
   Pagination,
   Paper,
+  Select,
+  SelectItem,
   Title,
 } from '@mantine/core';
 import { dehydrate, useQuery } from '@tanstack/react-query';
@@ -43,7 +45,7 @@ export async function getServerSideProps({ query }: NextApiRequest) {
   await queryClient.fetchQuery(['getProducts', page], () =>
     gqlClient.request(GetProductsDocument, {
       page: Number(page),
-      take: 10,
+      take: 25,
     })
   );
 
@@ -86,10 +88,22 @@ const useStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes.xl * 1.1,
     marginTop: theme.spacing.xs,
   },
-  pages: {
+  footer: {
     display: 'flex',
     justifyContent: 'center',
+    gap: theme.spacing.md,
     padding: theme.spacing.md,
+  },
+  itemsPerPageContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  itemsPerPageSelect: {
+    height: '32px',
+    lineHeight: '32px',
+    minHeight: '32px',
   },
 }));
 
@@ -97,12 +111,13 @@ export default function Category() {
   const router = useRouter();
   const initialPage = router.query.page || 1;
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [itemsPerPage, setItemsPerPage] = useState('25');
   const { data, isLoading } = useQuery<GetProductsQuery>(
-    ['getProducts', searchQuery, initialPage],
+    ['getProducts', searchQuery, initialPage, itemsPerPage],
     () =>
       gqlClient.request(GetProductsDocument, {
         page: Number(initialPage),
-        take: 10,
+        take: Number(itemsPerPage),
         search: searchQuery,
       })
   );
@@ -116,7 +131,7 @@ export default function Category() {
   };
 
   const getPageCount = () => {
-    return Math.ceil((data?.total || 0) / 10);
+    return Math.ceil((data?.total || 0) / Number(itemsPerPage));
   };
 
   const onQueryChange = useMemo(
@@ -164,6 +179,13 @@ export default function Category() {
     [data?.products, classes.card, classes.title]
   );
 
+  const selectItems: SelectItem[] = [
+    { label: '10', value: '10' },
+    { label: '25', value: '25' },
+    { label: '50', value: '50' },
+    { label: '100', value: '100' },
+  ];
+
   return (
     <div className={classes.container}>
       <div>
@@ -184,13 +206,24 @@ export default function Category() {
           {pageData}
         </Grid>
       </div>
-      <div className={classes.pages}>
+      <div className={classes.footer}>
         <Pagination
           total={getPageCount()}
           siblings={1}
           page={+initialPage}
           onChange={handlePageChange}
         />
+        <div className={classes.itemsPerPageContainer}>
+          <span>Items:</span>
+          <Select
+            classNames={{
+              input: classes.itemsPerPageSelect,
+            }}
+            data={selectItems}
+            onChange={(value) => setItemsPerPage(value!)}
+            defaultValue={itemsPerPage}
+          />
+        </div>
       </div>
     </div>
   );
