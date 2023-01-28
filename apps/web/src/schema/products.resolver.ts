@@ -16,4 +16,8 @@ export class ProductsResolver {
       )
       .slice((page - 1) * take, page * take);
   }
+  @Query(() => Number)
+  total(): number {
+    return products.length;
+  }
 }

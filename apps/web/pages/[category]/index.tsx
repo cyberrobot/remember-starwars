@@ -4,6 +4,7 @@ import {
   createStyles,
   Grid,
   LoadingOverlay,
+  Pagination,
   Paper,
   Title,
 } from '@mantine/core';
@@ -33,13 +34,13 @@ const GetProductsDocument = graphql(/* GraphQL */ `
       thumbnail
       images
     }
+    total
   }
 `);
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
-
-  await queryClient.fetchQuery(['getProducts'], () =>
+  await queryClient.fetchQuery(['getProducts', page], () =>
     gqlClient.request(GetProductsDocument, {
       page: Number(page),
       take: 10,
@@ -97,8 +98,8 @@ export default function Category() {
   const router = useRouter();
   const initialPage = router.query.page || 1;
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const { data } = useQuery<GetProductsQuery>(
-    ['getProducts', searchQuery],
+  const { data, isLoading } = useQuery<GetProductsQuery>(
+    ['getProducts', searchQuery, initialPage],
     () =>
       gqlClient.request(GetProductsDocument, {
         page: Number(initialPage),
@@ -107,24 +108,17 @@ export default function Category() {
       })
   );
   const { classes } = useStyles();
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  // const [queryResults, setQueryResults] = useState<AutocompleteItem[]>();
-
-  React.useEffect(() => {
-    setIsRefreshing(false);
-  }, [data?.products]);
 
   const handlePageChange = (page: number) => {
-    setIsRefreshing(true);
     router.push({
       pathname: `/${router.query.category}`,
       query: { page },
     });
   };
 
-  // const getPageCount = () => {
-  //   return Math.ceil(data.count / 10);
-  // };
+  const getPageCount = () => {
+    return Math.ceil((data?.total || 0) / 10);
+  };
 
   const onQueryChange = useMemo(
     () =>
@@ -183,16 +177,16 @@ export default function Category() {
             className={classes.autocompleteContainer}
           />
         </div>
-        <LoadingOverlay visible={isRefreshing} overlayOpacity={0.8} />
+        <LoadingOverlay visible={isLoading} overlayOpacity={0.8} />
         <Grid>{pageData}</Grid>
       </div>
       <div className={classes.pages}>
-        {/* <Pagination
+        <Pagination
           total={getPageCount()}
           siblings={1}
           page={+initialPage}
           onChange={handlePageChange}
-        /> */}
+        />
       </div>
     </div>
   );
