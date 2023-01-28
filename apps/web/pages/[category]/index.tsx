@@ -55,22 +55,21 @@ export async function getServerSideProps({ query }: NextApiRequest) {
 }
 
 const useStyles = createStyles((theme) => ({
-  container: {
-    padding: theme.spacing.sm,
-  },
-  innerContainer: {
-    position: 'relative',
-  },
+  container: {},
   searchContainer: {
     display: 'flex',
     justifyContent: 'center',
+    padding: theme.spacing.lg * 1.25,
+    backgroundColor: theme.colors.gray[3],
   },
   autocompleteContainer: {
     width: '400px',
-    marginBottom: theme.spacing.md,
+  },
+  productListContainer: {
+    padding: theme.spacing.lg,
   },
   card: {
-    height: 350,
+    height: 250,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -84,7 +83,7 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 900,
     color: theme.white,
     lineHeight: 1.2,
-    fontSize: theme.fontSizes.xl * 1.3,
+    fontSize: theme.fontSizes.xl * 1.1,
     marginTop: theme.spacing.xs,
   },
   pages: {
@@ -107,7 +106,7 @@ export default function Category() {
         search: searchQuery,
       })
   );
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   const handlePageChange = (page: number) => {
     router.push({
@@ -142,7 +141,7 @@ export default function Category() {
       data?.products.map((product, index) => {
         const { title, thumbnail } = product;
         return (
-          <Grid.Col span={3} key={index}>
+          <Grid.Col span={2} key={index}>
             <Paper
               shadow="md"
               p="xl"
@@ -167,7 +166,7 @@ export default function Category() {
 
   return (
     <div className={classes.container}>
-      <div className={classes.innerContainer}>
+      <div>
         <div className={classes.searchContainer}>
           <SearchInput
             onChange={onQueryChange}
@@ -178,7 +177,12 @@ export default function Category() {
           />
         </div>
         <LoadingOverlay visible={isLoading} overlayOpacity={0.8} />
-        <Grid>{pageData}</Grid>
+        <Grid
+          className={classes.productListContainer}
+          gutter={theme.spacing.lg}
+        >
+          {pageData}
+        </Grid>
       </div>
       <div className={classes.pages}>
         <Pagination
