@@ -1,44 +1,25 @@
 import {
-  AutocompleteItem,
-  Button,
-  createStyles,
   Grid,
   LoadingOverlay,
   Pagination,
-  Paper,
   Select,
   SelectItem,
+  Text,
   Title,
 } from '@mantine/core';
 import { dehydrate, useQuery } from '@tanstack/react-query';
 import lodashDebounce from 'lodash/debounce';
 import { NextApiRequest } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
 
 import { SearchInput } from '../../components/SearchInput';
-import { graphql } from '../../src/gql';
 import { gqlClient, queryClient } from '../../src/api';
-import { GetProductsQuery, Product } from '../../src/gql/graphql';
-
-const GetProductsDocument = graphql(/* GraphQL */ `
-  query getProducts($page: Float!, $take: Float!, $search: String) {
-    products(page: $page, take: $take, search: $search) {
-      id
-      title
-      description
-      price
-      discountPercentage
-      rating
-      stock
-      brand
-      category
-      thumbnail
-      images
-    }
-    total
-  }
-`);
+import { GetProductsQuery } from '../../src/gql/graphql';
+import { useStyles } from '../../styles/category';
+import { getPageCount, toAutocompleteItems } from '../../helpers/category';
+import { GetProductsDocument } from '../../documents/get-products';
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
@@ -55,57 +36,6 @@ export async function getServerSideProps({ query }: NextApiRequest) {
     },
   };
 }
-
-const useStyles = createStyles((theme) => ({
-  container: {},
-  searchContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: theme.spacing.lg * 1.25,
-    backgroundColor: theme.colors.gray[3],
-  },
-  autocompleteContainer: {
-    width: '400px',
-  },
-  productListContainer: {
-    padding: theme.spacing.lg,
-  },
-  card: {
-    height: 250,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  },
-
-  title: {
-    fontFamily: `Greycliff CF ${theme.fontFamily}`,
-    fontWeight: 900,
-    color: theme.white,
-    lineHeight: 1.2,
-    fontSize: theme.fontSizes.xl * 1.1,
-    marginTop: theme.spacing.xs,
-  },
-  footer: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-    padding: theme.spacing.md,
-  },
-  itemsPerPageContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
-  itemsPerPageSelect: {
-    height: '32px',
-    lineHeight: '32px',
-    minHeight: '32px',
-  },
-}));
 
 export default function Category() {
   const router = useRouter();
@@ -130,10 +60,6 @@ export default function Category() {
     });
   };
 
-  const getPageCount = () => {
-    return Math.ceil((data?.total || 0) / Number(itemsPerPage));
-  };
-
   const onQueryChange = useMemo(
     () =>
       lodashDebounce((value: string) => {
@@ -142,41 +68,27 @@ export default function Category() {
     []
   );
 
-  const toAutocompleteItems = (products: Product[]): AutocompleteItem[] => {
-    return products.map((product) => {
-      return {
-        value: product.title,
-        label: product.title,
-      };
-    });
-  };
-
   const pageData = useMemo(
     () =>
       data?.products.map((product, index) => {
-        const { title, thumbnail } = product;
+        const { title, thumbnail, category } = product;
         return (
-          <Grid.Col span={2} key={index}>
-            <Paper
-              shadow="md"
-              p="xl"
-              radius="md"
-              sx={{ backgroundImage: `url(${thumbnail})` }}
-              className={classes.card}
-            >
-              <div>
-                <Title order={3} className={classes.title}>
-                  {title}
-                </Title>
-              </div>
-              <Button variant="white" color="dark">
-                Read more
-              </Button>
-            </Paper>
+          <Grid.Col sm={4} md={3} lg={2} key={index} className={classes.card}>
+            <div className={classes.thumbnailContainer}>
+              <Image src={thumbnail} fill object-fit="cover" alt={title} />
+            </div>
+            <Title className={classes.title}>{title}</Title>
+            <Text className={classes.category}>{category}</Text>
           </Grid.Col>
         );
       }),
-    [data?.products, classes.card, classes.title]
+    [
+      data?.products,
+      classes.card,
+      classes.title,
+      classes.category,
+      classes.thumbnailContainer,
+    ]
   );
 
   const selectItems: SelectItem[] = [
@@ -201,14 +113,14 @@ export default function Category() {
         <LoadingOverlay visible={isLoading} overlayOpacity={0.8} />
         <Grid
           className={classes.productListContainer}
-          gutter={theme.spacing.lg}
+          gutter={theme.spacing.xl * 2}
         >
           {pageData}
         </Grid>
       </div>
       <div className={classes.footer}>
         <Pagination
-          total={getPageCount()}
+          total={getPageCount(data?.total!, itemsPerPage)}
           siblings={1}
           page={+initialPage}
           onChange={handlePageChange}
