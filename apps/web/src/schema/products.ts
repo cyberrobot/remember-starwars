@@ -25,3 +25,11 @@ export class Product {
   @Field(() => [String])
   images?: string[];
 }
+
+@ObjectType()
+export class ProductsResponse {
+  @Field(() => [Product])
+  items!: Product[];
+  @Field(() => Number)
+  total!: number;
+}

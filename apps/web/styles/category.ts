@@ -1,17 +1,24 @@
 import { createStyles } from '@mantine/core';
 export const useStyles = createStyles((theme) => ({
-  container: {},
+  container: {
+    display: 'grid',
+    gridTemplateColumns: '250px auto auto',
+    gridTemplateAreas:
+      '"header header header" "aside content content" "footer footer footer"',
+  },
   searchContainer: {
     display: 'flex',
     justifyContent: 'center',
     padding: theme.spacing.lg * 1.25,
     backgroundColor: theme.colors.gray[3],
+    gridArea: 'header',
   },
   autocompleteContainer: {
     width: '400px',
   },
   productListContainer: {
     padding: theme.spacing.lg,
+    gridArea: 'content',
   },
   card: {
     marginBottom: theme.spacing.lg,
@@ -36,11 +43,23 @@ export const useStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes.xs,
     marginTop: theme.spacing.xs / 2,
   },
+  aside: {
+    gridArea: 'aside',
+  },
+  // links: {
+  //   marginLeft: -theme.spacing.md,
+  //   marginRight: -theme.spacing.md,
+  // },
+  linksInner: {
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+  },
   footer: {
     display: 'flex',
     justifyContent: 'center',
     gap: theme.spacing.md,
     padding: theme.spacing.md,
+    gridArea: 'footer',
   },
   itemsPerPageContainer: {
     display: 'flex',
