@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import {
   Group,
   Box,
@@ -6,41 +6,43 @@ import {
   Text,
   UnstyledButton,
   createStyles,
+  Checkbox,
 } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
   control: {
-    fontWeight: 500,
+    fontWeight: 600,
     display: 'block',
     width: '100%',
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.md,
   },
-
   link: {
     fontWeight: 400,
     display: 'block',
     textDecoration: 'none',
     padding: `${theme.spacing.xs / 2}px ${theme.spacing.md}px`,
-    paddingLeft: theme.spacing.xs,
-    marginLeft: theme.spacing.xs,
     fontSize: theme.fontSizes.sm,
-    color:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[0]
-        : theme.colors.gray[7],
-
-    '&:hover': {
-      color: theme.fn.lighten(
-        theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
-          .background!,
-        0.1
-      ),
+  },
+  checkbox: {
+    label: {
+      color: theme.colors.gray[7],
+      '&:hover': {
+        color: theme.fn.lighten(
+          theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
+            .background!,
+          0.1
+        ),
+        cursor: 'pointer',
+      },
     },
   },
-
+  linksContainer: {
+    paddingLeft: 0,
+    margin: 0,
+  },
   chevron: {
     transition: 'transform 200ms ease',
   },
@@ -48,52 +50,50 @@ const useStyles = createStyles((theme) => ({
 
 interface LinksGroupProps {
   label: string;
-  initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  links?: { label: string; value: string }[];
+  onClick?: (selectedItems: string[]) => void;
 }
 
-export function LinksGroup({ label, initiallyOpened, links }: LinksGroupProps) {
+export function LinksGroup({ label, links, onClick }: LinksGroupProps) {
   const { classes, theme } = useStyles();
   const hasLinks = Array.isArray(links);
-  const [opened, setOpened] = useState(initiallyOpened || false);
-  const ChevronIcon = theme.dir === 'ltr' ? IconChevronRight : IconChevronLeft;
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const isChecked = useCallback(
+    (value: string) => selectedItems.includes(value),
+    [selectedItems]
+  );
   const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      component="a"
-      className={classes.link}
-      href={link.link}
-      key={link.label}
-      onClick={(event) => event.preventDefault()}
-    >
-      {link.label}
+    <Text<'li'> component="li" className={classes.link} key={link.label}>
+      <Checkbox
+        className={classes.checkbox}
+        checked={isChecked(link.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          if (onClick) {
+            onClick(selectedItems);
+          }
+          if (e.target.checked) {
+            setSelectedItems((prev) => [...prev, link.value]);
+          } else {
+            setSelectedItems((prev) =>
+              prev.filter((item) => item !== link.value)
+            );
+          }
+        }}
+        label={link.label}
+      />
     </Text>
   ));
 
   return (
     <>
-      <UnstyledButton
-        onClick={() => setOpened((o) => !o)}
-        className={classes.control}
-      >
+      <UnstyledButton className={classes.control}>
         <Group position="apart" spacing={0}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box>{label}</Box>
           </Box>
-          {hasLinks && (
-            <ChevronIcon
-              className={classes.chevron}
-              size={14}
-              stroke={1.5}
-              style={{
-                transform: opened
-                  ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)`
-                  : 'none',
-              }}
-            />
-          )}
         </Group>
       </UnstyledButton>
-      {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
+      {hasLinks ? <ul className={classes.linksContainer}>{items}</ul> : null}
     </>
   );
 }

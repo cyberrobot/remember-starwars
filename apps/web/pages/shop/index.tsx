@@ -30,7 +30,7 @@ export async function getServerSideProps({ query }: NextApiRequest) {
     gqlClient.request(GetProductsDocument, {
       page: Number(page),
       take: 50,
-      // category: query.category as string,
+      // category: [],
     })
   );
 
@@ -46,14 +46,15 @@ export default function Category() {
   const initialPage = router.query.page || 1;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [itemsPerPage, setItemsPerPage] = useState('50');
+  const [categories, setCategories] = useState<string[]>([]);
   const { data, isLoading } = useQuery<GetProductsQuery>(
-    ['getProducts', searchQuery, initialPage, itemsPerPage],
+    ['getProducts', searchQuery, initialPage, itemsPerPage, categories],
     () =>
       gqlClient.request(GetProductsDocument, {
         page: Number(initialPage),
         take: Number(itemsPerPage),
         search: searchQuery,
-        // category: router.query.category as string,
+        // category: categories,
       })
   );
   console.log('Categories: ', data?.categories);
@@ -111,14 +112,18 @@ export default function Category() {
         let _category = category.replace(/-/g, ' ');
         return {
           label: _category.charAt(0).toUpperCase() + _category.slice(1),
-          link: '/',
+          value: category,
         };
       }),
     },
   ];
 
+  const onCategoryChange = (categories: string[]) => {
+    setCategories(categories);
+  };
+
   const links = sideNavItems.map((item) => (
-    <LinksGroup {...item} key={item.label} />
+    <LinksGroup {...item} key={item.label} onClick={onCategoryChange} />
   ));
 
   return (

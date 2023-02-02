@@ -46,10 +46,6 @@ export const useStyles = createStyles((theme) => ({
   aside: {
     gridArea: 'aside',
   },
-  // links: {
-  //   marginLeft: -theme.spacing.md,
-  //   marginRight: -theme.spacing.md,
-  // },
   linksInner: {
     paddingTop: theme.spacing.xl,
     paddingBottom: theme.spacing.xl,
