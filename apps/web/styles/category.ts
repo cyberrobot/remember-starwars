@@ -39,13 +39,28 @@ export const useStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes.sm,
     marginTop: theme.spacing.xs,
   },
-  price: {
+  priceContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'left',
+  },
+  originalPrice: {
+    fontFamily: `Greycliff CF ${theme.fontFamily}`,
+    fontWeight: 400,
+    lineHeight: 1.2,
+    color: theme.colors.gray[6],
+    fontSize: theme.fontSizes.sm,
+    marginTop: theme.spacing.xs / 2,
+    textDecoration: 'line-through',
+  },
+  discountedPrice: {
     fontFamily: `Greycliff CF ${theme.fontFamily}`,
     fontWeight: 500,
     lineHeight: 1.2,
-    color: theme.colors.dark[2],
+    color: theme.colors.red[7],
     fontSize: theme.fontSizes.sm,
     marginTop: theme.spacing.xs / 2,
+    marginLeft: theme.spacing.xs / 2.5,
   },
   aside: {
     gridArea: 'aside',

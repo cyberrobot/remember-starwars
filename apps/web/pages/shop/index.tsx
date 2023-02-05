@@ -73,6 +73,10 @@ export default function Category() {
     []
   );
 
+  const getDiscountedPrice = (price: number, discount: number) => {
+    return price - price * (discount / 100);
+  };
+
   const pageData = useMemo(
     () =>
       data?.products.items.map((product, index) => {
@@ -89,7 +93,18 @@ export default function Category() {
               />
             </div>
             <Title className={classes.title}>{title}</Title>
-            <Text className={classes.price}>£{product.price.toFixed(2)}</Text>
+            <div className={classes.priceContainer}>
+              <Text className={classes.originalPrice}>
+                £
+                {getDiscountedPrice(
+                  product.price,
+                  product.discountPercentage
+                ).toFixed(2)}
+              </Text>
+              <Text className={classes.discountedPrice}>
+                £{product.price.toFixed(2)}
+              </Text>
+            </div>
           </Grid.Col>
         );
       }),
@@ -98,7 +113,7 @@ export default function Category() {
       classes.card,
       classes.title,
       classes.thumbnailContainer,
-      classes.price,
+      classes.discountedPrice,
     ]
   );
 
