@@ -8,7 +8,6 @@ import {
   createStyles,
   Checkbox,
 } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
   control: {
@@ -68,16 +67,16 @@ export function LinksGroup({ label, links, onClick }: LinksGroupProps) {
         className={classes.checkbox}
         checked={isChecked(link.value)}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          if (onClick) {
-            onClick(selectedItems);
-          }
+          let newItems = [];
           if (e.target.checked) {
-            setSelectedItems((prev) => [...prev, link.value]);
+            newItems = [...selectedItems, link.value];
           } else {
-            setSelectedItems((prev) =>
-              prev.filter((item) => item !== link.value)
-            );
+            newItems = selectedItems.filter((item) => item !== link.value);
           }
+          if (onClick) {
+            onClick(newItems);
+          }
+          setSelectedItems(newItems);
         }}
         label={link.label}
       />

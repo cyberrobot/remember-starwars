@@ -9,7 +9,7 @@ export class ProductsResolver {
     @Arg('page') page: number,
     @Arg('take') take: number,
     @Arg('search', { defaultValue: '' }) search: string,
-    @Arg('category', { defaultValue: '' }) category: string
+    @Arg('category', (type) => [String]) category: string[]
   ): {
     items: Product[];
     total: number;
@@ -19,13 +19,19 @@ export class ProductsResolver {
         .filter((product) =>
           product.title.toLowerCase().includes(search.toLowerCase())
         )
-        .filter((product) =>
-          product.category.toLowerCase().includes(category.toLowerCase())
-        )
+        .filter((product) => {
+          if (category.length === 0) {
+            return true;
+          }
+          return category.includes(product.category.toLowerCase());
+        })
         .slice((page - 1) * take, page * take),
-      total: products.filter((product) =>
-        product.category.toLowerCase().includes(category.toLowerCase())
-      ).length,
+      total: products.filter((product) => {
+        if (category.length === 0) {
+          return true;
+        }
+        return category.includes(product.category.toLowerCase());
+      }).length,
     };
   }
   @Query(() => [String])

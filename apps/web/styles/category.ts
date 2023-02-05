@@ -24,8 +24,12 @@ export const useStyles = createStyles((theme) => ({
     marginBottom: theme.spacing.lg,
   },
   thumbnailContainer: {
+    display: 'block',
+    width: '100%',
+    height: 'auto',
     position: 'relative',
-    height: 250,
+    overflow: 'hidden',
+    padding: '80.2% 0 0 0',
   },
   title: {
     fontFamily: `Greycliff CF ${theme.fontFamily}`,

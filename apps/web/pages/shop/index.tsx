@@ -3,7 +3,6 @@ import {
   LoadingOverlay,
   Navbar,
   Pagination,
-  ScrollArea,
   Select,
   SelectItem,
   Text,
@@ -30,7 +29,7 @@ export async function getServerSideProps({ query }: NextApiRequest) {
     gqlClient.request(GetProductsDocument, {
       page: Number(page),
       take: 50,
-      // category: [],
+      category: [],
     })
   );
 
@@ -54,7 +53,7 @@ export default function Category() {
         page: Number(initialPage),
         take: Number(itemsPerPage),
         search: searchQuery,
-        // category: categories,
+        category: categories,
       })
   );
   console.log('Categories: ', data?.categories);
@@ -80,12 +79,17 @@ export default function Category() {
       data?.products.items.map((product, index) => {
         const { title, thumbnail } = product;
         return (
-          <Grid.Col sm={4} md={3} lg={3} key={index} className={classes.card}>
+          <Grid.Col sm={6} md={4} lg={3} key={index} className={classes.card}>
             <div className={classes.thumbnailContainer}>
-              <Image src={thumbnail} fill object-fit="cover" alt={title} />
+              <Image
+                src={thumbnail}
+                fill
+                object-fit="cover"
+                alt={title}
+                sizes="(max-width: 500px) 100vw, (max-width: 500px) 50vw, 33vw"
+              />
             </div>
             <Title className={classes.title}>{title}</Title>
-            {/* <Text className={classes.category}>{category}</Text> */}
           </Grid.Col>
         );
       }),
@@ -107,7 +111,6 @@ export default function Category() {
   const sideNavItems = [
     {
       label: 'Category',
-      initiallyOpened: true,
       links: data?.categories?.map((category) => {
         let _category = category.replace(/-/g, ' ');
         return {

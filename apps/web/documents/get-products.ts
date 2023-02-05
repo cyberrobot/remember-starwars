@@ -5,7 +5,7 @@ export const GetProductsDocument: any = graphql(/* GraphQL */ `
     $page: Float!
     $take: Float!
     $search: String
-    $category: String
+    $category: [String!]!
   ) {
     products(page: $page, take: $take, search: $search, category: $category) {
       items {
