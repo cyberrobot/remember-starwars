@@ -56,7 +56,6 @@ export default function Category() {
         category: categories,
       })
   );
-  console.log('Categories: ', data?.categories);
   const { classes, theme } = useStyles();
 
   const handlePageChange = (page: number) => {
@@ -90,6 +89,7 @@ export default function Category() {
               />
             </div>
             <Title className={classes.title}>{title}</Title>
+            <Text className={classes.price}>£{product.price.toFixed(2)}</Text>
           </Grid.Col>
         );
       }),
@@ -98,6 +98,7 @@ export default function Category() {
       classes.card,
       classes.title,
       classes.thumbnailContainer,
+      classes.price,
     ]
   );
 

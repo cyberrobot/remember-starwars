@@ -35,16 +35,16 @@ export const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF ${theme.fontFamily}`,
     fontWeight: 600,
     lineHeight: 1.2,
-    color: theme.colors.dark[4],
-    fontSize: theme.fontSizes.xs,
+    color: theme.colors.dark[6],
+    fontSize: theme.fontSizes.sm,
     marginTop: theme.spacing.xs,
   },
-  category: {
+  price: {
     fontFamily: `Greycliff CF ${theme.fontFamily}`,
     fontWeight: 500,
     lineHeight: 1.2,
     color: theme.colors.dark[2],
-    fontSize: theme.fontSizes.xs,
+    fontSize: theme.fontSizes.sm,
     marginTop: theme.spacing.xs / 2,
   },
   aside: {
