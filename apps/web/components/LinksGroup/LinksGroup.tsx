@@ -27,6 +27,7 @@ const useStyles = createStyles((theme) => ({
   },
   checkbox: {
     label: {
+      fontSize: theme.fontSizes.md,
       color: theme.colors.gray[7],
       '&:hover': {
         color: theme.fn.lighten(
@@ -64,6 +65,7 @@ export function LinksGroup({ label, links, onClick }: LinksGroupProps) {
   const items = (hasLinks ? links : []).map((link) => (
     <Text<'li'> component="li" className={classes.link} key={link.label}>
       <Checkbox
+        size="xs"
         className={classes.checkbox}
         checked={isChecked(link.value)}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
