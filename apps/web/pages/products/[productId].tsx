@@ -91,13 +91,13 @@ export default function ProductPage() {
       })
   );
   const {
-    product: { images, title, price, discountPercentage, description },
+    product: { thumbnail, title, price, discountPercentage, description },
   } = data as GetProductByIdQuery;
   return (
     <Container>
       <div className={classes.row}>
         <div className={cx(classes.column, classes.imageContainer)}>
-          {data && <Image src={images[0]} fill object-fit="cover" alt="" />}
+          {data && <Image src={thumbnail} fill object-fit="cover" alt="" />}
         </div>
         <div className={cx(classes.column, classes.details)}>
           <Text className={classes.title}>{title}</Text>

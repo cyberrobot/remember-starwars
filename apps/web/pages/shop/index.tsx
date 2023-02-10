@@ -26,6 +26,7 @@ import {
 } from '../../helpers/product';
 import { GetProductsDocument } from '../../documents/products';
 import { LinksGroup } from '../../components/LinksGroup';
+import Link from 'next/link';
 
 export async function getServerSideProps({ query }: NextApiRequest) {
   const page = query.page || 1;
@@ -80,31 +81,36 @@ export default function Category() {
   const pageData = useMemo(
     () =>
       data?.products.items.map((product, index) => {
-        const { title, thumbnail } = product;
+        const { title, thumbnail, id } = product;
         return (
           <Grid.Col sm={6} md={4} lg={3} key={index} className={classes.card}>
-            <div className={classes.thumbnailContainer}>
-              <Image
-                src={thumbnail}
-                fill
-                object-fit="cover"
-                alt={title}
-                sizes="(max-width: 500px) 100vw, (max-width: 500px) 50vw, 33vw"
-              />
-            </div>
-            <Title className={classes.title}>{title}</Title>
-            <div className={classes.priceContainer}>
-              <Text className={classes.originalPrice}>
-                £
-                {getDiscountedPrice(
-                  product.price,
-                  product.discountPercentage
-                ).toFixed(2)}
-              </Text>
-              <Text className={classes.discountedPrice}>
-                £{product.price.toFixed(2)}
-              </Text>
-            </div>
+            <Link
+              className={classes.productLinkContainer}
+              href={`products/${id}`}
+            >
+              <div className={classes.thumbnailContainer}>
+                <Image
+                  src={thumbnail}
+                  fill
+                  object-fit="cover"
+                  alt={title}
+                  sizes="(max-width: 500px) 100vw, (max-width: 500px) 50vw, 33vw"
+                />
+              </div>
+              <Title className={classes.title}>{title}</Title>
+              <div className={classes.priceContainer}>
+                <Text className={classes.originalPrice}>
+                  £
+                  {getDiscountedPrice(
+                    product.price,
+                    product.discountPercentage
+                  ).toFixed(2)}
+                </Text>
+                <Text className={classes.discountedPrice}>
+                  £{product.price.toFixed(2)}
+                </Text>
+              </div>
+            </Link>
           </Grid.Col>
         );
       }),
@@ -160,9 +166,11 @@ export default function Category() {
           className={classes.autocompleteContainer}
         />
       </header>
-      <article className={classes.productListContainer}>
-        <LoadingOverlay visible={isLoading} overlayOpacity={0.8} />
-        <Grid gutter={theme.spacing.xl * 2}>{pageData}</Grid>
+      <article className={classes.productListContainerOuter}>
+        <div className={classes.productListContainer}>
+          <LoadingOverlay visible={isLoading} overlayOpacity={0.8} />
+          <Grid gutter={theme.spacing.xl * 2}>{pageData}</Grid>
+        </div>
       </article>
       <aside className={classes.aside}>
         <Navbar>

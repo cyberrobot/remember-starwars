@@ -20,8 +20,20 @@ export const useStyles = createStyles((theme) => ({
     padding: theme.spacing.lg,
     gridArea: 'content',
   },
+  productListContainerOuter: {
+    padding: theme.spacing.lg,
+    backgroundColor: '#f8f9fa',
+  },
   card: {
     marginBottom: theme.spacing.lg,
+    '&:hover': {
+      boxShadow: theme.shadows.md,
+      cursor: 'pointer',
+      backgroundColor: theme.colors.white,
+    },
+  },
+  productLinkContainer: {
+    textDecoration: 'none',
   },
   thumbnailContainer: {
     display: 'block',
