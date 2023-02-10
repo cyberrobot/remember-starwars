@@ -19,8 +19,12 @@ import { SearchInput } from '../../components/SearchInput';
 import { gqlClient, queryClient } from '../../src/api';
 import { GetProductsQuery } from '../../src/gql/graphql';
 import { useStyles } from '../../styles/category';
-import { getPageCount, toAutocompleteItems } from '../../helpers/category';
-import { GetProductsDocument } from '../../documents/get-products';
+import {
+  getDiscountedPrice,
+  getPageCount,
+  toAutocompleteItems,
+} from '../../helpers/product';
+import { GetProductsDocument } from '../../documents/products';
 import { LinksGroup } from '../../components/LinksGroup';
 
 export async function getServerSideProps({ query }: NextApiRequest) {
@@ -73,10 +77,6 @@ export default function Category() {
     []
   );
 
-  const getDiscountedPrice = (price: number, discount: number) => {
-    return price - price * (discount / 100);
-  };
-
   const pageData = useMemo(
     () =>
       data?.products.items.map((product, index) => {
@@ -114,6 +114,8 @@ export default function Category() {
       classes.title,
       classes.thumbnailContainer,
       classes.discountedPrice,
+      classes.originalPrice,
+      classes.priceContainer,
     ]
   );
 

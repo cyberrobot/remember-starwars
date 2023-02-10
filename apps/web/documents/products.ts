@@ -26,3 +26,21 @@ export const GetProductsDocument: any = graphql(/* GraphQL */ `
     categories
   }
 `);
+
+export const GetProductByIdDocument: any = graphql(/* GraphQL */ `
+  query getProductById($id: Float!) {
+    product(id: $id) {
+      id
+      title
+      description
+      price
+      discountPercentage
+      rating
+      stock
+      brand
+      category
+      thumbnail
+      images
+    }
+  }
+`);

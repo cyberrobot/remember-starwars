@@ -38,4 +38,8 @@ export class ProductsResolver {
   categories(): string[] {
     return [...new Set(products.map((product) => product.category))];
   }
+  @Query(() => Product)
+  product(@Arg('id') id: number): Product {
+    return products.find((product) => product.id === id) as Product;
+  }
 }

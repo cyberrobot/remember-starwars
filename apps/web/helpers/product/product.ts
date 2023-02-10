@@ -15,3 +15,7 @@ export const toAutocompleteItems = (
 export const getPageCount = (total: number, itemsPerPage: string) => {
   return Math.ceil((total || 0) / Number(itemsPerPage));
 };
+
+export const getDiscountedPrice = (price: number, discount: number) => {
+  return price - price * (discount / 100);
+};
